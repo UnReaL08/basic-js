@@ -1,64 +1,84 @@
 class VigenereCipheringMachine {
-    constructor(value = true) {
-        this.direct = value;
+    constructor(reverse) {
+      this.reverse = reverse;
     }
-    encrypt() {
-        if ( !message || !key ) {
-            throw new Error("error");
+  
+    encrypt(message, key) {
+      if(!message ||
+        !key) throw new Error();
+  
+      alphabet = [];
+      for (i = 65; i < 91; i++) {
+        alphabet.push( String.fromCharCode(i) );
+      }
+  
+      m = message.toUpperCase().split('');
+      k = key.toUpperCase().split('');
+  
+      result = [];
+      j = 0;
+  
+      for (i = 0; i < m.length; i++) {
+        if(alphabet.indexOf(m[i]) === -1) {
+          result.push(m[i]);
+          continue;
         }
-
-        message = message.toUpperCase();
-        key = key.toUpperCase();
+  
+        sum = alphabet.indexOf(m[i]) + alphabet.indexOf(k[j]);
+        finIndex = -1;
         
-        const offset = "A".charCodeAt(0);
-        const alphabetSize = 26;
-
-        result = "";
-        keyIndex = 0;
-        for (i = 0; i < message.length; i++) {
-            if ( message.charCodeAt(i) < offset || message.charCodeAt(i) > offset + alphabetSize ) {
-                result += message[i];
-                continue;
-            } else {
-                index = ((message.charCodeAt(i) - offset + key.charCodeAt(keyIndex) - offset) % alphabetSize) + offset;
-                result += String.fromCharCode(index);
-            }
-            keyIndex++;
-            if(keyIndex == key.length){
-                keyIndex = 0;
-            }
-           
+        if (alphabet.length - 1 - sum < 0) {
+          finIndex = Math.abs(alphabet.length - 1 - sum) - 1;
+        } else {
+          finIndex = sum;
         }
-        return this.direct ? result : result.split('').reverse().join('');
+        
+        result.push(alphabet[finIndex]);
+        
+        j++;
+        if (j === k.length) j = 0;
+      }
+  
+      return (this.reverse === false) ? result.reverse().join('') : result.join('');
     }
-
-    decrypt() {
-        if ( !message || !key ) {
-            throw new Error("error");
+  
+    decrypt(message, key) {
+      if(!message ||
+         !key) throw new Error();
+      
+      alphabet = [];
+      for (i = 65; i < 91; i++) {
+        alphabet.push( String.fromCharCode(i) );
+      }
+  
+      m = message.toUpperCase().split('');
+      k = key.toUpperCase().split('');
+  
+      result = [];
+      j = 0;
+  
+      for (i = 0; i < m.length; i++) {
+        if(alphabet.indexOf(m[i]) === -1) {
+          result.push(m[i]);
+          continue;
         }
-        message = message.toUpperCase();
-        key = key.toUpperCase();
-        const offset = "A".charCodeAt(0);
-        const alphabetSize = 26;
-
-        result = "";
-        keyIndex = 0;
-
-        for (i = 0; i < message.length; i++) { 
-            if ( message.charCodeAt(i) < offset || message.charCodeAt(i) > offset + alphabetSize ) {
-                result += message[i];
-                continue;
-            } else {
-                index = (((message.charCodeAt(i) - offset) + alphabetSize - (key.charCodeAt(keyIndex) - offset)) % alphabetSize) + offset
-                result += String.fromCharCode(index);
-            }
-            keyIndex++;
-            if(keyIndex == key.length){
-                keyIndex = 0;
-            }
+  
+        mI = alphabet.indexOf(m[i]);
+        kI = alphabet.indexOf(k[j]);
+      
+        finIndex = 1 + (mI > kI) ? mI - kI : kI - mI;
+        if(finIndex < 0) {
+          finIndex = alphabet.length + finIndex;
         }
-        return this.direct ? result : result.split('').reverse().join('');
+        
+        result.push(alphabet[finIndex]);
+        
+        j++;
+        if (j === k.length) j = 0;
+      }
+  
+      return (this.reverse === false) ? result.reverse().join('') : result.join('');
     }
-}
-
-module.exports = VigenereCipheringMachine;
+  }
+  
+  module.exports = VigenereCipheringMachine;
