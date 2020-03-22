@@ -1,11 +1,13 @@
 module.exports = class DepthCalculator {
-    calculateDepth(arr) {
-        count = 0;
-        arr.forEach(item => {
-            if (Array.isArray(item)) {
-                count = Math.max(this.calculateDepth(item), count);
-            };
-        });
-        return count + 1;
-    }; 
-};
+    calculateDepth(arr, depth = 1, set = []) {
+      set.push(depth);
+  
+      arr.forEach( e =>  {
+        if (Array.isArray(e)) {
+          this.calculateDepth(e, depth + 1, set);
+        }
+      });
+  
+      return set.reduce( (prev, current) => prev > current ? prev : current);
+    }
+  };
